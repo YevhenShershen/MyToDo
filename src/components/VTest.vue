@@ -11,16 +11,10 @@
       <button>Push</button>
     </form>
     <div>
-      <span>{{ name }} {{ secondName }} {{ age }}</span>
-
       -------------------------------
       <div v-for="(item, id) in arrData" :key="id">
         <span
-          ><h3>
-            id:{{ id + 1 }} Name:{{ item.name }};  Surname:{{
-              item.secondName
-            }};
-            Age:{{ item.age }}
+          ><h3>id:{{ id + 1 }} Name:{{ item.name }};  Surname:{{item.secondName}}; Age:{{ item.age }}
           </h3>
           <v-btn @click="deleteItem(id)" elevation="2" class="mr-4" >Delete</v-btn>
           <v-btn @click="toUpperText(item, id)" elevation="2">Upper</v-btn></span

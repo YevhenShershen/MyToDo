@@ -22,8 +22,8 @@
         nav
       >
         <v-list-item
-          v-for="item in navigationItems"
-          :key="item"
+          v-for="(item, id) in navigationItems"
+          :key="id"
           link
           @click="Navigation(item.path)"
         >
@@ -53,7 +53,7 @@ export default {
 
     navigationItems: [
       {path:'/', name: "To-do" },
-      { path: '/day', name: "Day" },
+      {path: '/day', name: "Day" },
       {path:'/week', name: "Week" },
       {path:'/month', name: "Month" },
       {path:'/year', name: "Year" },
