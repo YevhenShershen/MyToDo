@@ -1,23 +1,24 @@
 <template>
   <div id="app">
     <form @submit.prevent="pushInformation">
-      <input type="text" v-model="arrObject.name" placeholder="name" />
+      <input type="text" v-model="informationObj.name" placeholder="name" />
       <input
-        type="text"
-        v-model="arrObject.secondName"
-        placeholder="second name"
+        type="text" v-model="informationObj.secondName" placeholder="second name"
       />
-      <input type="text" v-model="arrObject.age" placeholder="age" />
-      <button>Push</button>
+      <input type="text" v-model="informationObj.age" placeholder="age" />
+      <button class="push">Push</button>
     </form>
     <div>
       -------------------------------
       <div v-for="(item, id) in arrData" :key="id">
         <span
-          ><h3>id:{{ id + 1 }} Name:{{ item.name }};  Surname:{{item.secondName}}; Age:{{ item.age }}
+          ><h3>
+            id:{{ item.id }} Name:{{ item.name }}; Surname:{{
+              item.secondName
+            }}; Age:{{ item.age }}
           </h3>
-          <v-btn @click="deleteItem(id)" elevation="2" class="mr-4" >Delete</v-btn>
-          <v-btn @click="toUpperText(item, id)" elevation="2">Upper</v-btn></span
+          <v-btn @click="deleteItem()" elevation="2" class="mr-4">Delete</v-btn>
+          <v-btn @click="toUpperText(id)" elevation="2">Upper</v-btn></span
         >
       </div>
       <v-btn @click="clearArr" elevation="2" class="mt-4">Clear All</v-btn>
@@ -30,24 +31,15 @@ export default {
   name: "App",
   data() {
     return {
-arrIndex: {},
-      arrData: [
-        {
-          name: "Vasia",
-          secondName: "Vasiczkin",
-          age: "33",
-        },
-        {
-          name: "Marta",
-          secondName: "Kowalska",
-          age: "22",
-        },
-      ],
-      arrObject: {
+      informationObj: {
         name: "",
         secondName: "",
         age: "",
       },
+      arrData: [
+        { name: "Vasia2", secondName: "Vasiczkin", age: "33" },
+        { name: "Marta", secondName: "Kowalska", age: "22" },
+      ],
     };
   },
   components: {},
@@ -55,26 +47,40 @@ arrIndex: {},
     clearArr() {
       this.arrData = [];
     },
-    toUpperText(elem, index) {
+        toUpperText(index) {
 
-for( let id in this.arrData[index]){
-this.arrData[index][id].toUpperCase()
-// console.log(typeof(this.arrData[index][id].toUpperCase()) )
-console.log(elem.id )
-console.log(this.arrData[index])
-// this.arrData.splice(index, 1, this.arrIndex)
-}
-    },
-    deleteItem(index) {
-      console.log(index);
-      this.arrData.splice(index, 1);
-    },
+    for( let elem in this.arrData[index]){
+       console.log(elem)
+      // console.log(this.arrData[index])
+ this.informationObj[elem] = this.arrData[index][elem].toUpperCase();
+    // console.log(this.informationObj.elem  )
+    // console.log(this.informationObj[elem])
+
+      }
+       this.arrData.splice(index, 1, this.informationObj )
+         this.informationObj = {
+        name: "",
+        secondName: "",
+        age: "",
+    }
+        },
+    //     deleteItem(index) {
+    //       console.log(index);
+    //       this.arrData.splice(index, 1);
+    //     },
     pushInformation() {
-      this.arrData.push(this.arrObject);
-      this.arrObject = { name: "", secondName: "", age: "" };
+      this.arrData.push(this.informationObj);
+      console.log(this.arrData)
     },
   },
 };
 </script>
 
-<style></style>
+<style>
+.push{
+ background: burlywood;
+ border-radius:5px;
+ border: 1px solid;
+ padding: 5px 20px;
+}
+</style>
