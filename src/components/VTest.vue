@@ -1,7 +1,8 @@
 <template>
   <div id="app">
-    <form @submit.prevent="pushInformation">
-      <input type="text" v-model="informationObj.name" placeholder="name" />
+
+    <form @submit.prevent="pushInformation" class="form-field">
+      <input type="text" v-model="informationObj.name" placeholder="name" class="mr-4" />
       <input
         type="text" v-model="informationObj.secondName" placeholder="second name"
       />
@@ -9,7 +10,7 @@
       <button class="push">Push</button>
     </form>
     <div>
-      -------------------------------
+
       <div v-for="(item, id) in arrData" :key="id">
         <span
           ><h3>
@@ -17,11 +18,11 @@
               item.secondName
             }}; Age:{{ item.age }}
           </h3>
-          <v-btn @click="deleteItem()" elevation="2" class="mr-4">Delete</v-btn>
+          <v-btn @click="deleteItem(id)" elevation="2" class="mr-4">Delete</v-btn>
           <v-btn @click="toUpperText(id)" elevation="2">Upper</v-btn></span
         >
       </div>
-      <v-btn @click="clearArr" elevation="2" class="mt-4">Clear All</v-btn>
+      <v-btn @click="clearArr" elevation="2" class="mt-4" v-if="arrData != !arrData">Clear All</v-btn>
     </div>
   </div>
 </template>
@@ -64,15 +65,19 @@ export default {
         age: "",
     }
         },
-    //     deleteItem(index) {
-    //       console.log(index);
-    //       this.arrData.splice(index, 1);
-    //     },
+        deleteItem(index) {
+          console.log(index);
+          this.arrData.splice(index, 1);
+        },
     pushInformation() {
       this.arrData.push(this.informationObj);
-      console.log(this.arrData)
+         this.informationObj = {
+        name: "",
+        secondName: "",
+        age: "",
+    }
     },
-  },
+      },
 };
 </script>
 
