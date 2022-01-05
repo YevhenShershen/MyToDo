@@ -24,6 +24,7 @@
       </div>
       <v-btn @click="clearArr" elevation="2" class="mt-4" v-if="arrData != !arrData">Clear All</v-btn>
     </div>
+
   </div>
 </template>
 
@@ -32,6 +33,7 @@ export default {
   name: "App",
   data() {
     return {
+
       informationObj: {
         name: "",
         secondName: "",

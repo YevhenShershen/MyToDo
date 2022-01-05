@@ -105,7 +105,7 @@
           new: 1,
           total: 3,
           title: 'Website & Social',
-          information: "GitHub: https://github.com/YevhenShershen; Gmail: shershen.yevhen@gmail.com"
+          information: "GitHub: https://github.com/YevhenShershen; mail: shershen.yevhen@gmail.com"
         },
         {
           color: 'teal',
