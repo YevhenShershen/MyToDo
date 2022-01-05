@@ -56,7 +56,7 @@
           <v-tab
 
           v-for="nav in navigationItems"
-          :key="nav"
+          :key="nav.name"
           @click="Navigation(nav.path)"
           >
            {{nav.name}}</v-tab>
