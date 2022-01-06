@@ -1,6 +1,6 @@
 <template>
   <v-list subheader flat>
-    <v-list-item-group v-model="settings" multiple>
+    <v-list-item-group multiple>
       <v-text-field
         outlined
         label="Add Task"
@@ -25,27 +25,37 @@
             <v-list-item-content>
               <v-list-item-title
                 :class="{ 'text-decoration-line-through': task.done }"
-                >{{ task.info }}</v-list-item-title
+                class="d-flex justify-space-between"
+                ><span>{{ task.info }}</span>
+                <span
+                  ><v-icon color="primary lighten-1">mdi-calendar</v-icon
+                  >{{ task.taskDate }}</span
+                ></v-list-item-title
               >
             </v-list-item-content>
             <v-list-item-action>
               <v-menu bottom left>
                 <template v-slot:activator="{ on, attrs }">
-                  <v-btn dark icon v-bind="attrs" v-on="on">
+                  <v-btn
+                    dark
+                    icon
+                    v-bind="attrs"
+                    v-on="on"
+                    @click="modalWindRight = true"
+                  >
                     <v-icon color="primary lighten-1">mdi-dots-vertical</v-icon>
                   </v-btn>
                 </template>
 
-                <v-list>
+                <v-list v-if="modalWindRight">
                   <v-list-item>
                     <v-btn
                       class="mx-10"
                       icon
                       color="primary"
                       dark
-                      @click="dialog3 = !dialog3"
+                      @click="editTasks(id, ModalWindow)"
                     >
-                      <!-- @click="editTask( task.id, changeDialog3)" -->
                       <v-icon color="primary lighten-1"
                         >mdi-clipboard-edit</v-icon
                       >
@@ -53,17 +63,42 @@
                     </v-btn>
                   </v-list-item>
                   <v-list-item>
-                    <v-btn
-                      class="mx-10"
-                      icon
-                      color="primary"
-                      dark
-                      @click="dateTask(task.id)"
+                    <v-dialog
+                      ref="dialog"
+                      v-model="modal"
+                      :return-value.sync="date"
+                      persistent
+                      width="290px"
                     >
-                      <v-icon color="primary lighten-1"
-                        >mdi-clipboard-text-clock</v-icon
-                      >Due Date
-                    </v-btn>
+                      <template v-slot:activator="{ on, attrs }">
+                        <v-btn
+                          class="mx-10"
+                          icon
+                          color="primary"
+                          dark
+                          v-bind="attrs"
+                          v-on="on"
+                        >
+                          <v-icon color="primary lighten-1"
+                            >mdi-clipboard-text-clock</v-icon
+                          >
+                          Due Date
+                        </v-btn>
+                      </template>
+                      <v-date-picker v-model="tasksDate" scrollable>
+                        <v-spacer></v-spacer>
+                        <v-btn text color="primary" @click="modal = false">
+                          Cancel
+                        </v-btn>
+                        <v-btn
+                          text
+                          color="primary"
+                          @click="addDate(id)"
+                        >
+                          OK
+                        </v-btn>
+                      </v-date-picker>
+                    </v-dialog>
                   </v-list-item>
                   <v-list-item>
                     <v-btn
@@ -71,7 +106,7 @@
                       icon
                       color="primary"
                       dark
-                      @click.stop="deleteTask(task.id)"
+                      @click.stop="deleteTask(task.id, ModalWindowRightFunc)"
                     >
                       <v-icon color="primary lighten-1">mdi-delete</v-icon>
                       Delete
@@ -93,92 +128,45 @@
                   </v-list-item>
                 </v-list>
               </v-menu>
-              <v-btn icon @click.stop="deleteTask(task.id)">
-                <v-icon color="primary lighten-1">mdi-delete</v-icon>
-              </v-btn>
             </v-list-item-action>
           </template>
         </v-list-item>
         <v-divider></v-divider>
       </div>
     </v-list-item-group>
-    <div class="my-2">
+    <div class="my-2 d-flex justify-center">
       <v-btn color="error" dark large @click="clearTasks"> Clear All </v-btn>
     </div>
-    <div>
-      <v-menu bottom left>
-        <template v-slot:activator="{ on, attrs }">
-          <v-btn dark icon v-bind="attrs" v-on="on">
-            <v-icon>mdi-dots-vertical</v-icon>
-          </v-btn>
-        </template>
-
-        <v-list>
-          <v-list-item v-for="(item, i) in items" :key="i">
-            <v-list-item-title>{{ item.title }}</v-list-item-title>
-          </v-list-item>
-        </v-list>
-      </v-menu>
-    </div>
     <div class="modalmenu">
-        <v-dialog
-        v-model="dialog3"
-        max-width="500px"
-      >
+      <v-dialog v-model="dialog3" max-width="500px">
         <v-card>
           <v-card-title>
             <span>Edit Task</span>
             <v-spacer></v-spacer>
-            <v-menu
-              bottom
-              left
-            >
-            </v-menu>
-          </v-card-title>
-       <v-text-field
-            outlined
-            :label="idTask"
-            class="pa-4"
-            hide-details
-            clearable
-            v-model="idTask"
-            @keyup.enter="changeTask"
-            ></v-text-field>
-                    <v-card-actions>
-            <v-btn
-              color="primary"
-              text
-              @click="dialog3 = false"
-            >
-              Close
-            </v-btn>
-                      </v-card-actions>
-        </v-card>
-      </v-dialog>
-      <!-- <v-dialog v-model="dialog3" max-width="500px">
-        <v-card>
-          <v-card-title>
-            <span>Edit Task</span>
-            <v-spacer></v-spacer>
+            <v-menu bottom left> </v-menu>
           </v-card-title>
           <v-text-field
             outlined
-            :label="idTask"
+            label="Change Your Task"
             class="pa-4"
             hide-details
             clearable
-            v-model="idTask"
-            @click:append="changeTask"
-            @keyup.enter="changeTask"
+            :value="editTask.info"
+            v-model="editTask.info"
+            @keyup.enter="saveTask(editTask, editTask.id, ModalWindow())"
           ></v-text-field>
           <v-card-actions>
-            <v-btn color="primary" text @click="dialog3 = false">
-              Сhange
+            <v-btn
+              color="primary"
+              text
+              @click="saveTask(editTask, editTask.id, ModalWindow())"
+            >
+              Save
             </v-btn>
-            <v-btn color="error" text> Cancel </v-btn>
+            <v-btn color="red" text @click="ModalWindow"> Close </v-btn>
           </v-card-actions>
         </v-card>
-      </v-dialog> -->
+      </v-dialog>
     </div>
   </v-list>
 </template>
@@ -188,7 +176,8 @@ export default {
   name: "VToDo",
   data() {
     return {
-      idTask: "",
+      modalWindRight: false,
+      editTask: { info: "", id: "", taskDate: "", done: false  },
       dialog3: false,
       items: [
         { title: "Edite", icon: "mdi-clipboard-edit" },
@@ -198,19 +187,48 @@ export default {
       ],
       newTaskTitle: "",
       tasks: [
-        { info: "make some coffe", id: "1", done: false },
-        { info: "make some coffe123", id: "2", done: false },
+        { info: "make some coffe", id: "1", taskDate:'', done: false },
+        { info: "make some coffe123", id: "2", taskDate:'', done: false },
       ],
       partOfInformation: "",
+      date: new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
+        .toISOString()
+        .substr(0, 10),
+      tasksDate: new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
+        .toISOString()
+        .substr(0, 10),
+      menu: false,
+      modal: false,
+      menu2: false,
     };
   },
   methods: {
-    editTask(index) {
-      console.log(index);
+    addDate(index){
+this.tasks[index]['taskDate'] = this.tasksDate
+this.modal = false
+this.modalWindRight = false
     },
-    //     changeDialog3(){
-    // this.dialog3 = true
-    //     },
+    ModalWindowRightFunc() {
+      this.modalWindRight = false;
+    },
+    saveTask(item, id, callback) {
+      this.tasks.splice(id, 1, item);
+      (this.editTask = { info: "", id: "" }), callback;
+    },
+    editTasks(indx, callback) {
+      this.editTask.info = this.tasks[indx]["info"];
+      this.editTask.id = indx;
+      console.log(this.editTask.info);
+      console.log(this.editTask.id);
+       callback();
+    },
+    ModalWindow() {
+      if (this.dialog3 == false) {
+        this.dialog3 = true;
+      } else {
+        this.dialog3 = false;
+      }
+    },
     clearTasks() {
       this.tasks = [];
     },
@@ -219,18 +237,21 @@ export default {
       console.log(task);
       task.done = !task.done;
     },
-    deleteTask(id) {
+    deleteTask(id, callback) {
       this.tasks = this.tasks.filter((task) => task.id != id);
+      callback();
     },
     addTask() {
       let newTask = {
         info: this.newTaskTitle,
         id: Date.now(),
+        taskDate: this.date,
         done: false,
       };
       this.newTaskTitle = "";
       this.tasks.push(newTask);
-    },
+
+      },
   },
 };
 </script>
